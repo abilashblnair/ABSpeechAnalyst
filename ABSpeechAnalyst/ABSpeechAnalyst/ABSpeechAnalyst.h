@@ -13,6 +13,7 @@
 @interface ABSpeechAnalyst : NSObject
 - (ABSpeechAnalyst *)initWithSpeechButton:(UIButton *)speechButton;
 - (void)startRecording:(void(^)(NSString *responseText, NSError *error))completion;
+- (void)startRecordingForInterval:(NSTimeInterval)interval completion:(void(^)(NSString *responseText, NSError *error))completion;
 - (void)Stop;
 
 @property (nonatomic,assign) BOOL isRecording;

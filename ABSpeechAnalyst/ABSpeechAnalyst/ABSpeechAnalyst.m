@@ -59,6 +59,14 @@ typedef void(^SpeechRecognizerCompletion)(NSString *responseText, NSError *error
     }];
 }
 
+#pragma mark - Start recording for interval
+- (void)startRecordingForInterval:(NSTimeInterval)interval completion:(void(^)(NSString *responseText, NSError *error))completion
+{
+    completionHandler = completion;
+    [NSTimer scheduledTimerWithTimeInterval:interval target:self selector:@selector(Stop) userInfo:nil repeats:false];
+    [self startRecording:completion];
+}
+#pragma mark - Start/stop recording using push button
 - (void)startRecording:(void(^)(NSString *responseText, NSError *error))completion
 {
     self.isRecording = true;
@@ -106,7 +114,7 @@ typedef void(^SpeechRecognizerCompletion)(NSString *responseText, NSError *error
     }
     
 }
-
+#pragma mark - Stop recording
 - (void)Stop
 {
     self.isRecording = false;
@@ -115,21 +123,20 @@ typedef void(^SpeechRecognizerCompletion)(NSString *responseText, NSError *error
         [regRequest endAudio];
     }
 }
-                      
+
+//Creating new audio engine request and task for fresh STP
 - (BOOL)isNewInput
 {
     if(regTask != nil) {
         [regTask cancel];
         regTask = nil;
     }
-//    if (avEngine.inputNode) {
-//        return false;
-//    }
     regRequest = [[SFSpeechAudioBufferRecognitionRequest alloc]init];
     regRequest.shouldReportPartialResults = true;
     return true;
 }
 
+//Validating speech response with user's corrections
 - (void)validateSpeech:(NSString *)responseText
 {
     [ABSpeechAnalyst showAlertTitle:@"" withMessage:@"Please edit or confirm the speech response text" withFieldext:responseText withCompletionBlock:^(NSString *finalText) {
